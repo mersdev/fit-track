@@ -2,7 +2,7 @@
 
 FitTrack is an intelligent workout planning application that creates personalized exercise routines based on your fitness profile, goals, and available equipment.
 
-## ✨ Key Features
+## ✨ Key Feature
 
 ### 🤖 AI-Powered Workout Generation
 
