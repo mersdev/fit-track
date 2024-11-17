@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { UserProfile } from "../types/profile";
 import { PencilIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { EditProfile } from "./EditProfile";
-import { equipmentOptions } from "../constants/profile";
 import { KettlebellIcon, PullUpBarIcon } from "./icons/EquipmentIcons";
 
 const equipmentIcons = {
