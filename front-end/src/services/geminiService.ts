@@ -13,7 +13,7 @@ interface WorkoutProfile {
 }
 
 export async function generateWorkoutPlan(profile: WorkoutProfile) {
-  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `
     Create a workout plan for a person with the following profile:
