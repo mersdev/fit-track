@@ -26,15 +26,17 @@ function GradientOverlay() {
 }
 
 const getProfileImage = (fitnessLevel: string) => {
+  const baseUrl = "https://mersdev.github.io/fit-track";
+
   switch (fitnessLevel) {
     case "beginner":
-      return "/images/beginner-profile.png";
+      return `${baseUrl}/images/beginner-profile.png`;
     case "intermediate":
-      return "/images/intermediate-profile.png";
+      return `${baseUrl}/images/intermediate-profile.png`;
     case "advanced":
-      return "/images/advanced-profile.png";
+      return `${baseUrl}/images/advanced-profile.png`;
     default:
-      return "/images/beginner-profile.png";
+      return `${baseUrl}/images/beginner-profile.png`;
   }
 };
 
