@@ -1,13 +1,16 @@
 {
   "name": "animated-todo-app",
   "private": true,
+  "homepage": "https://mersdev.github.io/fit-track",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

@@ -8,7 +8,6 @@ import {
 import { Profile } from "./components/Profile";
 import { WorkoutPlanner } from "./components/WorkoutPlanner";
 import { DumbbellIcon } from "./components/icons/EquipmentIcons";
-import { UserIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 
 function NavLinks() {
@@ -48,7 +47,7 @@ function NavLinks() {
 
 function App() {
   return (
-    <Router>
+    <Router basename="/fit-track">
       <div className="flex flex-col min-h-screen bg-gray-50">
         {/* Header with Navigation */}
         <header className="bg-gray-50 sticky top-0 z-50">
