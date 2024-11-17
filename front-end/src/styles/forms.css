@@ -1,0 +1,8 @@
+.form-checkbox:checked {
+  background-color: rgb(64 224 208) !important;
+  border-color: rgb(64 224 208) !important;
+}
+
+.form-checkbox:focus {
+  --tw-ring-color: rgb(64 224 208) !important;
+}

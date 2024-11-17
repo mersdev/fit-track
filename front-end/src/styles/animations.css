@@ -1,0 +1,18 @@
+@keyframes lift {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-15px) rotate(-5deg);
+  }
+  75% {
+    transform: translateY(-15px) rotate(5deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+.lifting {
+  animation: lift 1s ease-in-out;
+}

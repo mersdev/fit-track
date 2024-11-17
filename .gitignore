@@ -1,0 +1,86 @@
+# Dependencies
+/front-end/node_modules
+/front-end/.pnp
+/front-end/.pnp.js
+
+# Testing
+/front-end/coverage
+
+# Production
+/front-end/dist
+/front-end/build
+
+# Environment files
+/front-end/.env
+/front-end/.env.local
+/front-end/.env.development.local
+/front-end/.env.test.local
+/front-end/.env.production.local
+
+# Logs
+/front-end/npm-debug.log*
+/front-end/yarn-debug.log*
+/front-end/yarn-error.log*
+
+# Editor directories and files
+/front-end/.vscode/*
+!/front-end/.vscode/extensions.json
+/front-end/.idea
+/front-end/*.suo
+/front-end/*.ntvs*
+/front-end/*.njsproj
+/front-end/*.sln
+/front-end/*.sw?
+
+# OS generated files
+/front-end/.DS_Store
+/front-end/**/.DS_Store
+/front-end/._*
+/front-end/.Spotlight-V100
+/front-end/.Trashes
+/front-end/ehthumbs.db
+/front-end/Thumbs.db
+
+# TypeScript
+/front-end/*.tsbuildinfo
+
+# Vite
+/front-end/.vite
+
+# Golang Backend
+/back-end/bin/
+/back-end/pkg/
+/back-end/*.exe
+/back-end/*.exe~
+/back-end/*.dll
+/back-end/*.so
+/back-end/*.dylib
+
+# Golang Test binary, built with 'go test -c'
+/back-end/*.test
+
+# Golang Output of the go coverage tool
+/back-end/*.out
+
+# Golang Dependency directories (remove the comment below to include it)
+/back-end/vendor/
+
+# Golang Environment files
+/back-end/.env
+/back-end/.env.local
+/back-end/.env.development
+/back-end/.env.test
+/back-end/.env.production
+
+# Golang IDE specific files
+/back-end/.idea/
+/back-end/.vscode/
+/back-end/*.iml
+
+# Golang Debug files
+/back-end/__debug_bin
+/back-end/.debug
+
+# Golang Air live reload
+/back-end/tmp/
+.DS_Store
