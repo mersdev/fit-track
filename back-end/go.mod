@@ -1,6 +1,6 @@
 module back-end
 
-go 1.23.3
+go 1.21
 
 require (
 	github.com/go-pg/pg/v10 v10.13.0
