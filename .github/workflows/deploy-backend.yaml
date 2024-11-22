@@ -45,11 +45,19 @@ jobs:
             SUPABASE_ID=${{ secrets.SUPABASE_ID }}
             SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
 
+      - name: Install and configure the Koyeb CLI
+        uses: koyeb-community/koyeb-actions@v2
+        with:
+          api_token: "${{ secrets.KOYEB_EXAMPLES_APPS_TOKEN }}"
+
       - name: Deploy to Koyeb
         uses: koyeb/action-git-deploy@v1
         with:
           app-name: fitness-go-backend
-          service-name: backend-service
+          service-ports: "3000:http"
+          service-routes: "/:3000"
+          docker: merszerodev1023/fitness-go-backend:latest
+          privileged: true
           service-env: |
             SUPABASE_HOST=${{ secrets.SUPABASE_HOST }}
             SUPABASE_USER=${{ secrets.SUPABASE_USER }}
@@ -57,6 +65,7 @@ jobs:
             SUPABASE_DBNAME=${{ secrets.SUPABASE_DBNAME }}
             SUPABASE_PORT=${{ secrets.SUPABASE_PORT }}
             SUPABASE_ID=${{ secrets.SUPABASE_ID }}
-            SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
-          docker-image: merszerodev1023/fitness-go-backend:latest
-          api-token: ${{ secrets.KOYEB_API_TOKEN }}
+            SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}`
+
+      - name: Clean up Koyeb Service
+        uses: koyeb/action-git-deploy/cleanup@v1
