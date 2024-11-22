@@ -65,7 +65,7 @@ jobs:
             SUPABASE_DBNAME=${{ secrets.SUPABASE_DBNAME }}
             SUPABASE_PORT=${{ secrets.SUPABASE_PORT }}
             SUPABASE_ID=${{ secrets.SUPABASE_ID }}
-            SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}`
+            SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
 
       - name: Clean up Koyeb Service
         uses: koyeb/action-git-deploy/cleanup@v1
