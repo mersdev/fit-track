@@ -1,4 +1,4 @@
-name: Docker Publish Backend
+name: Docker Build and Push
 
 on:
   push:
@@ -16,17 +16,30 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./back-end
+          context: .
+          platforms: linux/amd64
           push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/fitness-app-backend:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/fitness-app-backend:${{ github.sha }}
+          tags: merszerodev1023/fitness-go-backend:latest
+          build-args: |
+            SUPABASE_HOST=${{ secrets.SUPABASE_HOST }}
+            SUPABASE_USER=${{ secrets.SUPABASE_USER }}
+            SUPABASE_PASSWORD=${{ secrets.SUPABASE_PASSWORD }}
+            SUPABASE_DBNAME=${{ secrets.SUPABASE_DBNAME }}
+            SUPABASE_PORT=${{ secrets.SUPABASE_PORT }}
+            SUPABASE_ID=${{ secrets.SUPABASE_ID }}
+            SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
