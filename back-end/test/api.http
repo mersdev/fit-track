@@ -1,0 +1,156 @@
+// @baseUrl = http://localhost:3000/v1
+@baseUrl = https://institutional-susanne-trapeza-demo-b4c27a27.koyeb.app/v1
+
+### Sign Up
+POST {{baseUrl}}/auth/signup
+Content-Type: application/json
+
+{
+    "email": "merszerodev+test@gmail.com",
+    "password": "your-password"
+}
+
+### Login
+# @name signin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "merszerodev+test@gmail.com",
+    "password": "your-password"
+}
+
+@authToken = {{signin.response.body.$.access_token}}
+@user_id = b1ebd69d-96a7-4f32-8f48-b917dd6968f9
+
+### Health Check
+GET {{baseUrl}}/health
+
+### Create User Profile
+# @name createProfile
+POST {{baseUrl}}/profiles
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "user_id": "{{user_id}}",
+    "age": 25,
+    "weight": 70.5,
+    "height": 175.5,
+    "fitnessLevel": "intermediate",
+    "fitnessGoals": ["weight loss", "muscle gain"],
+    "healthConditions": ["none"],
+    "availableEquipment": ["dumbbells", "resistance bands"],
+    "preferredWorkoutDuration": 60,
+    "workoutDaysPerWeek": 4
+}
+
+@profile_id = 2
+
+### Get User Profile
+GET {{baseUrl}}/profiles/{{profile_id}}
+Authorization: Bearer {{authToken}}
+
+### List User Profiles
+GET {{baseUrl}}/profiles
+Authorization: Bearer {{authToken}}
+
+### Update User Profile
+PUT {{baseUrl}}/profiles/{{profile_id}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "age": 26,
+    "weight": 71.0,
+    "height": 175.5,
+    "fitnessLevel": "intermediate",
+    "fitnessGoals": ["weight loss", "muscle gain"],
+    "healthConditions": ["none"],
+    "availableEquipment": ["dumbbells", "resistance bands", "yoga mat"],
+    "preferredWorkoutDuration": 45,
+    "workoutDaysPerWeek": 5
+}
+
+### Delete User Profile
+DELETE {{baseUrl}}/profiles/{{profile_id}}
+Authorization: Bearer {{authToken}}
+
+### Get User Profile by UserId
+GET {{baseUrl}}/profiles/user/{{user_id}}
+Authorization: Bearer {{authToken}}
+
+### Update User Profile by UserId
+PUT {{baseUrl}}/profiles/user/{{user_id}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "age": 26,
+    "weight": 71.0,
+    "height": 175.5,
+    "fitnessLevel": "intermediate",
+    "fitnessGoals": ["weight loss", "muscle gain"],
+    "healthConditions": ["none"],
+    "availableEquipment": ["dumbbells", "resistance bands", "yoga mat"],
+    "preferredWorkoutDuration": 45,
+    "workoutDaysPerWeek": 5
+} 
+
+### Delete User Profile by UserId
+DELETE {{baseUrl}}/profiles/user/{{user_id}}
+Authorization: Bearer {{authToken}}
+
+### Get Workout Tasks by UserId
+GET {{baseUrl}}/profiles/user/{{user_id}}/tasks
+Authorization: Bearer {{authToken}}
+
+### Get Workout Tasks by UserId with pagination
+GET {{baseUrl}}/profiles/user/{{user_id}}/tasks?limit=5&offset=0
+Authorization: Bearer {{authToken}}
+
+### Create Workout Task
+# @name createTask
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "userId": {{profile_id}},
+    "name": "Push-ups",
+    "sets": 3,
+    "reps": 12,
+    "description": "Standard push-ups with proper form",
+    "completed": false
+}
+
+@task_id = 2
+
+### Get Workout Task
+GET {{baseUrl}}/tasks/{{task_id}}
+Authorization: Bearer {{authToken}}
+
+### List Workout Tasks
+GET {{baseUrl}}/tasks
+Authorization: Bearer {{authToken}}
+
+### Update Workout Task
+PUT {{baseUrl}}/tasks/{{task_id}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "name": "Push-ups",
+    "sets": 4,
+    "reps": 15,
+    "description": "Standard push-ups with proper form",
+    "completed": true
+}
+
+### Delete Workout Task
+DELETE {{baseUrl}}/tasks/{{task_id}}
+Authorization: Bearer {{authToken}}
+
+
+

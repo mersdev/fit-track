@@ -4,13 +4,14 @@ import { WorkoutTask } from "../types/workout";
 import { WorkoutDialog } from "./WorkoutDialog";
 import { DeleteDialog } from "./DeleteDialog";
 import { UserProfile } from "../types/profile";
+import { workoutApi, profileApi } from "../services/api";
 import {
   PencilIcon,
   TrashIcon,
   CheckCircleIcon,
   ArrowPathIcon,
-} from "@heroicons/react/24/outline";
-import { CheckCircleIcon as CheckCircleIconSolid } from "@heroicons/react/24/solid";
+  CheckCircleIcon as CheckCircleIconSolid,
+} from "@heroicons/react/24/solid";
 import { WorkoutLayout } from "./WorkoutLayout";
 import { SkeletonTask } from "./SkeletonTask";
 import { motion } from "framer-motion";
@@ -25,52 +26,122 @@ export function WorkoutPlanner() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<WorkoutTask | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [completedCount, setCompletedCount] = useState(0);
 
   useEffect(() => {
-    generatePlan();
-  }, []); // Auto-generate on component mount
+    loadWorkouts();
+  }, []);
 
-  const generatePlan = async () => {
-    setLoading(true);
+  const loadWorkouts = async () => {
     try {
-      const savedProfile = localStorage.getItem("userProfile");
-      if (!savedProfile) {
-        throw new Error("Please create your profile first");
-      }
-
-      const userProfile: UserProfile = JSON.parse(savedProfile);
-      const plan = await generateWorkoutPlan({
-        age: userProfile.age,
-        weight: userProfile.weight,
-        height: userProfile.height,
-        fitnessLevel: userProfile.fitnessLevel as
-          | "beginner"
-          | "intermediate"
-          | "advanced",
-        goals: userProfile.fitnessGoals,
-        limitations: userProfile.healthConditions,
-        equipment: userProfile.availableEquipment,
-      });
-
-      // Take only the first 3 exercises
-      const threeTasks = plan.slice(0, 3);
-      setWorkoutPlan(
-        threeTasks.map((task: WorkoutTask) => ({
-          ...task,
-          id: crypto.randomUUID(),
-        }))
-      );
-    } catch (error) {
-      console.error("Failed to generate workout plan:", error);
+      setLoading(true);
+      const workouts = await workoutApi.getAllWorkouts();
+      setWorkoutPlan(workouts.map(workout => ({
+        ...workout,
+        completed: false
+      })));
+      setError(null);
+    } catch (err) {
+      console.error("Failed to load workouts:", err);
+      setError("Failed to load workouts. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = (task: WorkoutTask) => {
+  const generatePlan = async () => {
+    setLoading(true);
+    try {
+      const userProfile = await profileApi.getProfile();
+      const plan = await generateWorkoutPlan({
+        age: userProfile.age,
+        weight: userProfile.weight,
+        height: userProfile.height,
+        fitnessLevel: userProfile.fitnessLevel as "beginner" | "intermediate" | "advanced",
+        goals: userProfile.fitnessGoals,
+        limitations: userProfile.healthConditions,
+        equipment: userProfile.availableEquipment,
+      });
+
+      // Create new workouts in the backend
+      const createdWorkouts = await Promise.all(
+        plan.slice(0, 3).map(task => 
+          workoutApi.createWorkout({
+            name: task.name,
+            description: task.description,
+            sets: task.sets,
+            reps: task.reps,
+            weight: task.weight || 0
+          })
+        )
+      );
+
+      setWorkoutPlan(createdWorkouts.map(workout => ({
+        ...workout,
+        completed: false
+      })));
+      setError(null);
+    } catch (error) {
+      console.error("Failed to generate workout plan:", error);
+      setError("Failed to generate workout plan. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generateSingleWorkout = async (userProfile: UserProfile) => {
+    try {
+      const plan = await generateWorkoutPlan({
+        age: userProfile.age,
+        weight: userProfile.weight,
+        height: userProfile.height,
+        fitnessLevel: userProfile.fitnessLevel as "beginner" | "intermediate" | "advanced",
+        goals: userProfile.fitnessGoals,
+        limitations: userProfile.healthConditions,
+        equipment: userProfile.availableEquipment,
+      });
+
+      // Take only the first workout from the plan
+      const newWorkout = plan[0];
+      const createdWorkout = await workoutApi.createWorkout({
+        name: newWorkout.name,
+        description: newWorkout.description,
+        sets: newWorkout.sets,
+        reps: newWorkout.reps,
+        weight: newWorkout.weight || 0
+      });
+
+      return { ...createdWorkout, completed: false };
+    } catch (error) {
+      console.error("Failed to generate single workout:", error);
+      throw error;
+    }
+  };
+
+  const handleEdit = async (task: WorkoutTask) => {
     setSelectedTask(task);
     setIsDialogOpen(true);
+  };
+
+  const handleSave = async (updatedTask: WorkoutTask) => {
+    try {
+      setLoading(true);
+      const updated = await workoutApi.updateWorkout(updatedTask.id, updatedTask);
+      setWorkoutPlan(prev =>
+        prev.map(task =>
+          task.id === updated.id ? { ...updated, completed: task.completed } : task
+        )
+      );
+      setIsDialogOpen(false);
+      setSelectedTask(null);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to update workout:", err);
+      setError("Failed to update workout. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDelete = (task: WorkoutTask) => {
@@ -78,36 +149,64 @@ export function WorkoutPlanner() {
     setIsDeleteDialogOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (taskToDelete?.id) {
-      setWorkoutPlan((prev) =>
-        prev.filter((task) => task.id !== taskToDelete.id)
-      );
-      setIsDeleteDialogOpen(false);
-      setTaskToDelete(null);
+      try {
+        setLoading(true);
+        // Delete the workout
+        await workoutApi.deleteWorkout(taskToDelete.id);
+        setWorkoutPlan(prev =>
+          prev.filter(task => task.id !== taskToDelete.id)
+        );
+
+        // Get user profile for generating new workout
+        const userProfile = await profileApi.getProfile();
+        
+        // Generate and add a new workout to maintain 3 tasks
+        const newWorkout = await generateSingleWorkout(userProfile);
+        setWorkoutPlan(prev => [...prev, newWorkout]);
+
+        setIsDeleteDialogOpen(false);
+        setTaskToDelete(null);
+        setError(null);
+      } catch (err) {
+        console.error("Failed to delete workout:", err);
+        setError("Failed to delete workout. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
+
+  const toggleComplete = useCallback(async (taskId: string) => {
+    try {
+      const taskToUpdate = workoutPlan.find(task => task.id === taskId);
+      if (taskToUpdate) {
+        const updatedTask = await workoutApi.updateWorkout(taskId, {
+          ...taskToUpdate,
+          completed: !taskToUpdate.completed
+        });
+        
+        setWorkoutPlan(prevPlan =>
+          prevPlan.map(task =>
+            task.id === taskId ? { ...updatedTask, completed: !task.completed } : task
+          )
+        );
+        
+        setCompletedCount(prev =>
+          taskToUpdate.completed ? prev - 1 : prev + 1
+        );
+      }
+    } catch (err) {
+      console.error("Failed to update workout completion:", err);
+      setError("Failed to update workout completion. Please try again.");
+    }
+  }, [workoutPlan]);
 
   const sortedWorkoutPlan = [...workoutPlan].sort((a, b) => {
     if (a.completed === b.completed) return 0;
     return a.completed ? 1 : -1;
   });
-
-  const toggleComplete = useCallback((taskId: string) => {
-    setWorkoutPlan((prevPlan) => {
-      const newPlan = prevPlan.map((task) => {
-        if (task.id === taskId) {
-          return { ...task, completed: !task.completed };
-        }
-        return task;
-      });
-
-      const newCompletedCount = newPlan.filter((task) => task.completed).length;
-      setTimeout(() => setCompletedCount(newCompletedCount), 0);
-
-      return newPlan;
-    });
-  }, []);
 
   const container = {
     hidden: { opacity: 0 },
@@ -259,23 +358,7 @@ export function WorkoutPlanner() {
           setIsDialogOpen(false);
           setSelectedTask(null);
         }}
-        onSave={(updatedTask) => {
-          setWorkoutPlan((prev) => {
-            if (prev.some((task) => task.id === updatedTask.id)) {
-              // Update existing task
-              return prev.map((task) =>
-                task.id === updatedTask.id
-                  ? { ...updatedTask, completed: task.completed }
-                  : task
-              );
-            } else {
-              // Add new task
-              return [...prev, { ...updatedTask, completed: false }];
-            }
-          });
-          setIsDialogOpen(false);
-          setSelectedTask(null);
-        }}
+        onSave={handleSave}
       />
 
       <DeleteDialog

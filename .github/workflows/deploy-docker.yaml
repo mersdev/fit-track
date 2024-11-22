@@ -1,0 +1,32 @@
+name: Docker Publish Backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "back-end/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "back-end/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./back-end
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/fitness-app-backend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/fitness-app-backend:${{ github.sha }}
