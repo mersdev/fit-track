@@ -34,6 +34,9 @@ func NewApp(db *pg.DB, logger *zap.Logger) *App {
 }
 
 func (app *App) setupRoutes() {
+	// Add CORS middleware first
+    app.Router.Use(middleware.CorsMiddleware)
+	
 	// Add logging middleware to all routes
 	app.Router.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
