@@ -9,6 +9,8 @@ RUN go build -o ./fitness-backend ./main.go
 FROM alpine:latest AS runner
 WORKDIR /app
 COPY --from=builder /app/fitness-backend .
+COPY --from=builder /app/db/migrations ./db/migrations
+
 
 # Create .env file from build args
 ARG SUPABASE_HOST
