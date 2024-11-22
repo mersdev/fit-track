@@ -58,6 +58,7 @@ jobs:
           service-routes: "/:3000"
           docker: merszerodev1023/fitness-go-backend:latest
           privileged: true
+          service-instance-type: free
           service-env: |
             SUPABASE_HOST=${{ secrets.SUPABASE_HOST }}
             SUPABASE_USER=${{ secrets.SUPABASE_USER }}
