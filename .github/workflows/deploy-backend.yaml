@@ -44,3 +44,19 @@ jobs:
             SUPABASE_PORT=${{ secrets.SUPABASE_PORT }}
             SUPABASE_ID=${{ secrets.SUPABASE_ID }}
             SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
+
+      - name: Deploy to Koyeb
+        uses: koyeb/action-git-deploy@v1
+        with:
+          app-name: fitness-go-backend
+          service-name: backend-service
+          service-env: |
+            SUPABASE_HOST=${{ secrets.SUPABASE_HOST }}
+            SUPABASE_USER=${{ secrets.SUPABASE_USER }}
+            SUPABASE_PASSWORD=${{ secrets.SUPABASE_PASSWORD }}
+            SUPABASE_DBNAME=${{ secrets.SUPABASE_DBNAME }}
+            SUPABASE_PORT=${{ secrets.SUPABASE_PORT }}
+            SUPABASE_ID=${{ secrets.SUPABASE_ID }}
+            SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
+          docker-image: merszerodev1023/fitness-go-backend:latest
+          api-token: ${{ secrets.KOYEB_API_TOKEN }}
