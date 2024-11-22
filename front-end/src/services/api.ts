@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+// Get the API URL from environment variables
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // Types
 export interface Workout {
@@ -60,7 +61,7 @@ export const authApi = {
   },
 
   async register(email: string, password: string): Promise<AuthResponse> {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
       method: 'POST',
       headers: getContentTypeHeader(),
       body: JSON.stringify({ email, password }),

@@ -1,12 +1,16 @@
 {
-  "name": "animated-todo-app",
+  "name": "fit-track",
   "private": true,
   "homepage": "https://mersdev.github.io/fit-track",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mersdev/fit-track.git"
+  },
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "vite --mode development",
+    "build": "tsc && vite build --mode production",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "predeploy": "npm run build",

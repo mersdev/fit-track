@@ -84,3 +84,5 @@
 # Golang Air live reload
 /back-end/tmp/
 .DS_Store
+front-end/.env.production
+front-end/.env.development
